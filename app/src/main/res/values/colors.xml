@@ -7,4 +7,17 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="skin">#f8c09c</color>
+    <color name="skin_dark">#ef937d</color>
+    <color name="cyan_light">#29a1a1</color>
+    <color name="cyan_dark">#1f8b94</color>
+    <color name="gold">#ffd884</color>
+
+    <color name="dark_background">#33333d</color>
+    <color name="card_background_dark">#373740</color>
+    <color name="text_disabled">#84848a</color>
+    <color name="text_dark">#d2d2d4</color>
+    <color name="text_light">#212121</color>
+
 </resources>
