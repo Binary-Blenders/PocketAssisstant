@@ -12,7 +12,10 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,9 +34,9 @@ public class PassbookActivity extends AppCompatActivity {
 
         recyclerView=findViewById(R.id.transactions_recycler);
 
-        list.add(new TransactionItems("400","11:09:23 02/09/2011","shopping","debit","wedding"));
-        list.add(new TransactionItems("500","11:09:23 02/04/2010","notebooks","credit","wedding"));
-        list.add(new TransactionItems("600","11:09:23 11/12/2011","dishwasher","debit","wedding"));
+//        list.add(new TransactionItems("400","11:09:23 02/09/2011","shopping","debit","wedding"));
+//        list.add(new TransactionItems("500","11:09:23 02/04/2010","notebooks","credit","wedding"));
+//        list.add(new TransactionItems("600","11:09:23 11/12/2011","dishwasher","debit","wedding"));
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -42,27 +45,28 @@ public class PassbookActivity extends AppCompatActivity {
         TransactionAdapter recyclerAdapter=new TransactionAdapter(getApplicationContext(),list);
         recyclerView.setAdapter(recyclerAdapter);
 
-        firebaseFirestore.collection("Aishwarya").document("Transactions").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        firebaseFirestore.collection("Aishwarya").document("Transactions").collection("transactions").orderBy("time", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                HashMap<String,Object> transaction = (HashMap<String, Object>) documentSnapshot.getData();
-                for (String key: transaction.keySet()){
-                    ArrayList<HashMap<String,Object>> tranfers = (ArrayList<HashMap<String, Object>>) documentSnapshot.get(key);
-                    for(HashMap<String,Object> transfer : tranfers){
-                        long amount = (long) transfer.get("amount");
-                        Timestamp time = (Timestamp) transfer.get("time");
-                        Date date = time.toDate();
-                        String transaction_time = ""+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+" "+(date.getDay()+2)+"."+(date.getMonth()+1)+"."+(date.getYear()+1900);
-                        String transaction_type = transfer.get("transaction_type").toString();
-                        String transaction_for="";
-                        if (transaction_type.contentEquals("debit"))
-                            transaction_for = transfer.get("transaction_for").toString();
-
-                        TransactionItems item = new TransactionItems(String.valueOf(amount),transaction_time,transaction_for,transaction_type,key);
-                        list.add(item);
-                        recyclerAdapter.notifyDataSetChanged();
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot record : queryDocumentSnapshots.getDocuments()){
+                    HashMap<String,Object> item = (HashMap<String, Object>) record.getData();
+                    String purpose;
+                    String amount = String.valueOf(item.get("amount"));
+                    try {
+                        purpose = item.get("purpose").toString();
                     }
+                    catch (Exception e){
+                        purpose = "";
+                    }
+                    String source = item.get("source").toString();
+                    String type = item.get("transaction_type").toString();
+                    Date date = ((Timestamp) item.get("time")).toDate();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+                    String time = formatter.format(date);
+                    list.add(new TransactionItems(amount,purpose,source,time,type));
                 }
+                recyclerAdapter.notifyDataSetChanged();
+
             }
         });
 

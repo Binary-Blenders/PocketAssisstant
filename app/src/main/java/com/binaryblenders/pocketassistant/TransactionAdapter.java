@@ -37,11 +37,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(@NonNull TransactionViewholder holder, int position) {
 
-        holder.rupees.setText(list.get(position).getRupees());
+        holder.rupees.setText(list.get(position).getAmount());
         holder.time.setText(list.get(position).getTime());
-        holder.reason.setText(list.get(position).getReason());
-        holder.transactiontype.setText(list.get(position).getTransactiontype());
-        holder.purpose.setText(list.get(position).getPurpose());
+        holder.reason.setText(list.get(position).getPurpose());
+        holder.transactiontype.setText(list.get(position).getTransaction_type());
+        holder.purpose.setText(list.get(position).getSource());
+
+        if (position==list.size()-1)
+            holder.line.setVisibility(View.GONE);
 
 
     }
@@ -58,6 +61,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         TextView reason;
         TextView transactiontype;
         TextView purpose;
+        View line;
 
         public TransactionViewholder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +70,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             reason=itemView.findViewById(R.id.reason);
             transactiontype=itemView.findViewById(R.id.transactiontype);
             purpose=itemView.findViewById(R.id.purpose);
+            line=itemView.findViewById(R.id.line);
 
         }
 
