@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     CardView addCard,spendcard;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     TextView total_balance;
+    private ArrayAdapter<String> sourceAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         spendSource=findViewById(R.id.spend_source);
         spendClose = findViewById(R.id.spend_close);
         spendReason=findViewById(R.id.spend_reason);
+
 
 
         spendSource.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         ArrayList<String> sources= new ArrayList<>();
-        ArrayAdapter<String> sourceAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.custom_source_dropdown_item,sources);
+        sourceAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.custom_source_dropdown_item,sources);
+        sourceAdapter.setNotifyOnChange(true);
         addSource.setAdapter(sourceAdapter);
         spendSource.setAdapter(sourceAdapter);
         addSource.setThreshold(1);
@@ -114,13 +117,14 @@ public class MainActivity extends AppCompatActivity {
                 if (error==null){
                     sources.clear();
                     long balance = 0;
-                    for (DocumentSnapshot document : snapshots.getDocuments()){
+                    for (DocumentSnapshot document : snapshots){
                         sources.add(document.getId());
                         balance += document.getLong("balance");
                     }
                     total_balance.setText(String.valueOf(balance));
                     sourceAdapter.notifyDataSetChanged();
                 }
+
             }
         });
 
@@ -209,6 +213,25 @@ public class MainActivity extends AppCompatActivity {
                             long available_balance=documentSnapshot.getLong("balance");
                             if(available_balance<to_spend){
                                 Toast.makeText(MainActivity.this, "Not enough balance!", Toast.LENGTH_SHORT).show();
+                                spendClose.callOnClick();
+                            }
+                            else if(available_balance==to_spend){
+                                firestore.collection("Aishwarya").document("Balance").collection("balance").document(spendSource.getText().toString()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(MainActivity.this, "Delete Successful", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                                Timestamp time = Timestamp.now();
+                                HashMap<String,Object> spendMap = new HashMap<>();
+                                spendMap.put("amount",to_spend);
+                                spendMap.put("purpose",spendReason.getText().toString());
+                                spendMap.put("source",spendSource.getText().toString());
+                                spendMap.put("time",time);
+                                spendMap.put("transaction_type","debit");
+                                firestore.collection("Aishwarya").document("Transactions").collection("transactions").document().set(spendMap);
+
                                 spendClose.callOnClick();
                             }
                             else{
