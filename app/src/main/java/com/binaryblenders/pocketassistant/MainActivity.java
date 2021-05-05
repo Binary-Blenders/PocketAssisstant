@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SimpleAdapter;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     AutoCompleteTextView addSource,spendSource;
     CardView addCard,spendcard;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    TextView total_balance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         passbook=findViewById(R.id.passbook);
+        total_balance = findViewById(R.id.total_balance);
 
         addCard=findViewById(R.id.add_card);
         addMoney = findViewById(R.id.add_money);
@@ -66,9 +69,6 @@ public class MainActivity extends AppCompatActivity {
                 spendSource.showDropDown();
             }
         });
-
-
-
 
 
         passbook.setOnClickListener(new View.OnClickListener() {
@@ -113,9 +113,12 @@ public class MainActivity extends AppCompatActivity {
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException error) {
                 if (error==null){
                     sources.clear();
+                    long balance = 0;
                     for (DocumentSnapshot document : snapshots.getDocuments()){
                         sources.add(document.getId());
+                        balance += document.getLong("balance");
                     }
+                    total_balance.setText(String.valueOf(balance));
                     sourceAdapter.notifyDataSetChanged();
                 }
             }

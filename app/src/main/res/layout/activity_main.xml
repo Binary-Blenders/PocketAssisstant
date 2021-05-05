@@ -52,6 +52,7 @@
             android:layout_height="wrap_content"
             android:text="125"
             android:textSize="20dp"
+            android:id="@+id/total_balance"
             android:textStyle="bold"/>
 
     </LinearLayout>
@@ -128,7 +129,6 @@
         android:layout_height="wrap_content"
         android:text="SPEND MONEY"
         android:layout_marginTop="15dp"
-        android:theme="@style/Theme.PocketAssistant"
         android:background="@drawable/btn_bg"
         android:id="@+id/spend_money"/>
 
@@ -203,10 +203,10 @@
     <Button
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="PASSBOOK"
         android:layout_marginTop="15dp"
         android:theme="@style/Theme.PocketAssistant"
         android:background="@drawable/btn_bg"
+        android:text="PASSBOOK"
         android:id="@+id/passbook"/>
 
 
