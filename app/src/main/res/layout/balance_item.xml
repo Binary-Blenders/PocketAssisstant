@@ -72,7 +72,7 @@
                 android:text="₹"
                 android:id="@+id/balance"
                 android:textColor="@color/skin_dark"
-                android:textSize="25dp"
+                android:textSize="24dp"
                 android:textStyle="bold" />
 
         </LinearLayout>
