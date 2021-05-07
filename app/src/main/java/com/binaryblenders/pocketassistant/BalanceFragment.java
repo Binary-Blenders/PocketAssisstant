@@ -22,9 +22,14 @@ import java.util.ArrayList;
 
 public class BalanceFragment extends Fragment {
 
+    private final String userId;
     private RecyclerView balancerecyclerView;
     private ArrayList<BalanceDataModel> list=new ArrayList<>();
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+    public BalanceFragment(String userId) {
+        this.userId = userId;
+    }
 
 
     @Nullable
@@ -41,7 +46,7 @@ public class BalanceFragment extends Fragment {
         balancerecyclerView.setAdapter(balanceAdapter);
 
 
-        firestore.collection("Aishwarya").document("Balance").collection("balance").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firestore.collection(userId).document("Balance").collection("balance").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(error==null){

@@ -11,17 +11,19 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class MyViewpageAdapter extends FragmentStateAdapter {
 
+    String userId;
 
-    public MyViewpageAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+    public MyViewpageAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, String userId) {
         super(fragmentManager, lifecycle);
+        this.userId = userId;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
         switch (position){
-            case 0: return new BalanceFragment();
-            case 1: return new TransactionsFragment();
+            case 0: return new BalanceFragment(userId);
+            case 1: return new TransactionsFragment(userId);
         }
         return null;
     }

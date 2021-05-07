@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="90dp"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
@@ -20,7 +20,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:text="Source"
                 android:id="@+id/src"
                 android:textSize="20dp"
@@ -29,7 +29,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:textSize="15dp"
                 android:text="Added : "
                 android:layout_marginLeft="10dp"
@@ -37,12 +37,12 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:textSize="15dp"
                 android:text="₹"
                 android:id="@+id/added"
                 android:layout_marginLeft="65dp"
-                android:layout_marginTop="-30dp"/>
+                android:layout_marginTop="-35dp"/>
 
 
         </LinearLayout>
@@ -55,7 +55,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:textSize="15dp"
                 android:text="Balance"
                 android:layout_gravity="right"
@@ -65,14 +65,14 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_gravity="right"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
                 android:text="₹"
                 android:id="@+id/balance"
                 android:textColor="@color/skin_dark"
-                android:textSize="24dp"
+                android:textSize="25dp"
                 android:textStyle="bold" />
 
         </LinearLayout>

@@ -1,5 +1,6 @@
 package com.binaryblenders.pocketassistant;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -8,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -18,9 +21,15 @@ import android.widget.SimpleAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,13 +41,19 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String accessToken = "542958517764-smjnudcunlu1gmq84deugp4ls5nmlpvv.apps.googleusercontent.com";
+    private static final int RC_SIGN_IN = 100;
+    private static String userId;
+
     Button passbook,addMoney,addDone,spendMoney,addClose,spendDone,spendClose;
     EditText addAmount,spendAmount,spendReason;
     AutoCompleteTextView addSource,spendSource;
     CardView addCard,spendcard;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    TextView total_balance;
+    TextView total_balance,name;
     private ArrayAdapter<String> sourceAdapter;
+    private Toolbar toolbar;
+    private GoogleSignInClient user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         passbook=findViewById(R.id.passbook);
         total_balance = findViewById(R.id.total_balance);
+        name = findViewById(R.id.name);
 
         addCard=findViewById(R.id.add_card);
         addMoney = findViewById(R.id.add_money);
@@ -64,6 +80,17 @@ public class MainActivity extends AppCompatActivity {
         spendReason=findViewById(R.id.spend_reason);
 
 
+        userId = getIntent().getStringExtra("id");
+        name.setText("Hello " +getIntent().getStringExtra("name") + "!!!");
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestId()
+                .requestProfile()
+                .build();
+
+        user = GoogleSignIn.getClient(getApplicationContext(),gso);
+
 
         spendSource.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,9 +104,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(MainActivity.this,PassbookActivity.class);
+                intent.putExtra("id",userId);
                 startActivity(intent);
             }
         });
+
 
         addMoney.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         spendSource.setThreshold(0);
 
 
-        firestore.collection("Aishwarya").document("Balance").collection("balance").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firestore.collection(userId).document("Balance").collection("balance").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException error) {
                 if (error==null){
@@ -137,7 +166,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     for (String source : sources) {
                         if (addSource.getText().toString().contentEquals(source)) {
-                            firestore.collection("Aishwarya").document("Balance").collection("balance").document(source).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+
+                            firestore.collection(userId).document("Balance").collection("balance").document(source).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     long added, balance;
@@ -145,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                                     balance = documentSnapshot.getLong("balance");
                                     added = added + Long.valueOf(addAmount.getText().toString());
                                     balance += Long.valueOf(addAmount.getText().toString());
-                                    firestore.collection("Aishwarya").document("Balance").collection("balance").document(source).update("added", added, "balance", balance);
+                                    firestore.collection(userId).document("Balance").collection("balance").document(source).update("added", added, "balance", balance);
 
                                     Timestamp time = Timestamp.now();
                                     HashMap<String,Object> addMap = new HashMap<>();
@@ -153,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                                     addMap.put("source",addSource.getText().toString());
                                     addMap.put("time",time);
                                     addMap.put("transaction_type","credit");
-                                    firestore.collection("Aishwarya").document("Transactions").collection("transactions").document().set(addMap);
+                                    firestore.collection(userId).document("Transactions").collection("transactions").document().set(addMap);
                                 }
                             });
                             isAdded = true;
@@ -161,11 +191,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     if (!isAdded) {
+                        firestore.collection(userId).get();
+
                         HashMap<String, Object> map = new HashMap<>();
                         long add = Long.valueOf(addAmount.getText().toString());
                         map.put("added", add);
                         map.put("balance", add);
-                        firestore.collection("Aishwarya").document("Balance").collection("balance").document(addSource.getText().toString()).set(map);
+                        firestore.collection(userId).document("Balance").collection("balance").document(addSource.getText().toString()).set(map);
 
                         Timestamp time = Timestamp.now();
                         HashMap<String,Object> addMap = new HashMap<>();
@@ -173,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                         addMap.put("source",addSource.getText().toString());
                         addMap.put("time",time);
                         addMap.put("transaction_type","credit");
-                        firestore.collection("Aishwarya").document("Transactions").collection("transactions").document().set(addMap);
+                        firestore.collection(userId).document("Transactions").collection("transactions").document().set(addMap);
                     }
                 }
 
@@ -206,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                 if (spendAmount.getText().toString().isEmpty() | Long.valueOf(spendAmount.getText().toString()) == 0 | spendSource.getText().toString().isEmpty()) {
                     Toast.makeText(MainActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
                 } else {
-                    firestore.collection("Aishwarya").document("Balance").collection("balance").document(spendSource.getText().toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    firestore.collection(userId).document("Balance").collection("balance").document(spendSource.getText().toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             long to_spend=Long.valueOf(spendAmount.getText().toString());
@@ -216,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                                 spendClose.callOnClick();
                             }
                             else if(available_balance==to_spend){
-                                firestore.collection("Aishwarya").document("Balance").collection("balance").document(spendSource.getText().toString()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                firestore.collection(userId).document("Balance").collection("balance").document(spendSource.getText().toString()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Toast.makeText(MainActivity.this, "Delete Successful", Toast.LENGTH_SHORT).show();
@@ -230,13 +262,13 @@ public class MainActivity extends AppCompatActivity {
                                 spendMap.put("source",spendSource.getText().toString());
                                 spendMap.put("time",time);
                                 spendMap.put("transaction_type","debit");
-                                firestore.collection("Aishwarya").document("Transactions").collection("transactions").document().set(spendMap);
+                                firestore.collection(userId).document("Transactions").collection("transactions").document().set(spendMap);
 
                                 spendClose.callOnClick();
                             }
                             else{
                                 available_balance-=to_spend;
-                                firestore.collection("Aishwarya").document("Balance").collection("balance").document(spendSource.getText().toString()).update("balance",available_balance);
+                                firestore.collection(userId).document("Balance").collection("balance").document(spendSource.getText().toString()).update("balance",available_balance);
 
                                 Timestamp time = Timestamp.now();
                                 HashMap<String,Object> spendMap = new HashMap<>();
@@ -245,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                                 spendMap.put("source",spendSource.getText().toString());
                                 spendMap.put("time",time);
                                 spendMap.put("transaction_type","debit");
-                                firestore.collection("Aishwarya").document("Transactions").collection("transactions").document().set(spendMap);
+                                firestore.collection(userId).document("Transactions").collection("transactions").document().set(spendMap);
 
                                 spendClose.callOnClick();
                             }
@@ -260,6 +292,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_tool_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.logout:
+                user.signOut();
+                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                firebaseAuth.signOut();
+                startActivity(new Intent(getApplicationContext(),MainActivity2.class));
+                finish();
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
 
 
+    }
 }

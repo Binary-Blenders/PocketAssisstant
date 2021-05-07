@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="40"
+        android:background="#00ffffff"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="@color/cyan_dark"
+            android:text="Login - Sign Up"
+            android:layout_marginTop="30dp"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animationView"
+            android:layout_width="200dp"
+            android:layout_height="190dp"
+            android:layout_marginTop="40dp"
+            app:lottie_url="https://assets3.lottiefiles.com/packages/lf20_AFJYQy.json"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="60"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/loginpagebackground"
+        android:backgroundTint="@color/skin_dark"
+        android:rotation="180">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:rotation="180"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="100dp">
+
+            <com.google.android.gms.common.SignInButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/google_sign_in"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+
+<!--<com.google.android.material.textfield.TextInputLayout-->
+<!--android:layout_width="200dp"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:id="@+id/username"-->
+<!--style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"-->
+<!--app:boxStrokeWidth="1dp"-->
+<!--android:textColorHint="@color/skin_dark">-->
+
+<!--<com.google.android.material.textfield.TextInputEditText-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:inputType="textEmailAddress"-->
+<!--    android:hint="Username"-->
+<!--    android:textColorHint="@color/skin_dark"-->
+<!--    android:textColor="@color/black"/>-->
+
+<!--</com.google.android.material.textfield.TextInputLayout>-->
+
+<!--<com.google.android.material.textfield.TextInputLayout-->
+<!--android:layout_width="200dp"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:id="@+id/password"-->
+<!--style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"-->
+<!--app:boxStrokeWidth="1dp"-->
+<!--android:textColorHint="@color/skin_dark"-->
+<!--android:layout_marginTop="20dp"-->
+<!--app:passwordToggleEnabled="true">-->
+
+<!--<com.google.android.material.textfield.TextInputEditText-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:inputType="textPassword"-->
+<!--    android:hint="Password"-->
+<!--    android:textColorHint="@color/skin_dark"-->
+<!--    android:textColor="@color/black"/>-->
+
+<!--</com.google.android.material.textfield.TextInputLayout>-->
+
+
+<!--<LinearLayout-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:orientation="horizontal"-->
+<!--android:gravity="center_horizontal"-->
+<!--android:layout_marginTop="20dp">-->
+
+<!--<Button-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:id="@+id/signup"-->
+<!--    android:background="@drawable/btn_bg"-->
+<!--    android:backgroundTint="@color/cyan_light"-->
+<!--    android:theme="@style/Theme.PocketAssistant.DarkButton"-->
+<!--    android:text="SIGNUP"/>-->
+
+<!--<Button-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:text="Login"-->
+<!--    android:id="@+id/signin"-->
+<!--    android:layout_marginLeft="10dp"-->
+<!--    android:background="@drawable/btn_bg"-->
+<!--    android:theme="@style/Theme.PocketAssistant.DarkButton"-->
+<!--    android:backgroundTintMode="src_atop"/>-->
+
+<!--</LinearLayout>-->

@@ -33,6 +33,11 @@ public class TransactionsFragment extends Fragment {
     private FirebaseFirestore firebaseFirestore=FirebaseFirestore.getInstance();
     private Spinner spinner;
     private ArrayList<String> sources = new ArrayList<>();
+    private String userId;
+
+    public TransactionsFragment(String userId) {
+        this.userId = userId;
+    }
 
     @Nullable
     @Override
@@ -54,7 +59,7 @@ public class TransactionsFragment extends Fragment {
         sources.add("ALL");
 
 
-        firebaseFirestore.collection("Aishwarya").document("Transactions").collection("transactions").orderBy("time", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        firebaseFirestore.collection(userId).document("Transactions").collection("transactions").orderBy("time", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot record : queryDocumentSnapshots.getDocuments()){
